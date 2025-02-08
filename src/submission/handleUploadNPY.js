@@ -22,16 +22,16 @@ export async function handleUploadNPY(request, storage, corsHeaders) {
 		console.log("uniqueKey", uniqueKey)
 		const arrayBuffer = await file.arrayBuffer()
 		const uint8Array = new Uint8Array(arrayBuffer)
-		const res = await storage.put(uniqueKey, uint8Array, {
+		const uploadResult = await storage.put(uniqueKey, uint8Array, {
 			httpMetadata: { contentType: file.type },
 		})
-		console.log("res", res)
-		if (res.success) {
-			return responseSuccess({ path: uniqueKey, res }, `Upload ${file.name} npy success`, corsHeaders)
+		console.log("file.type", file.type, file.size)
+		if (uploadResult) {
+			return responseSuccess({ path: uniqueKey, res: uploadResult }, `Upload ${file.name} npy success`, corsHeaders)
 		}
 
-		console.log("Error", res)
-		return responseFailed(res, `Upload ${file.name} npy failed.`, 400, corsHeaders)
+		console.log("Error", )
+		return responseFailed(uploadResult, `Upload ${file.name} npy failed.`, 400, corsHeaders)
 	} catch (err) {
 		const errorMessage = err.message || "An unknown error occurred"
 		console.log("Exception", err)
