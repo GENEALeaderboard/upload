@@ -5,7 +5,7 @@ export async function handleUploadVideo(request, storage, corsHeaders) {
 		const formData = await request.formData()
 		const systemname = formData.get("systemname")
 		const fileName = formData.get("fileName")
-		console.log("formData", formData)
+		// console.log("formData", formData)
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		const file = formData.get("file")
@@ -23,20 +23,25 @@ export async function handleUploadVideo(request, storage, corsHeaders) {
 			return new Response("Invalid content type. Expecting multipart form data.", { status: 400 })
 		}
 
-		const uniqueKey = `videos/original/${systemname}/${fileName}`
+		const uniqueKey = `videos/original/${systemname}/${Date.now()}-${fileName}`
 		// const rsupload = await storage.put(uniqueKey, file.stream())
 		const arrayBuffer = await file.arrayBuffer()
 
 		const inputcode = fileName.replace(/\.[^.]+$/, "")
-		storage.put(uniqueKey, arrayBuffer, {
+		const rsupload = await storage.put(uniqueKey, arrayBuffer, {
 			httpMetadata: { contentType: file.type || "video/mp4" },
 		})
 
-		return responseSuccess(
-			{ path: uniqueKey, inputcode: inputcode, url: rsupload.Location },
-			`Upload ${fileName} video success`,
-			corsHeaders
-		)
+		if (rsupload) {
+			return responseSuccess(
+				{ path: uniqueKey, inputcode: inputcode, url: rsupload.Location },
+				`Upload ${fileName} video success`,
+				corsHeaders
+			)
+		}
+
+		console.log("Error", uploadResult)
+		return responseFailed(uploadResult, `Upload ${file.name} npy failed.`, 400, corsHeaders)
 	} catch (err) {
 		const errorMessage = err.message || "An unknown error occurred"
 		console.log("Exception", err)
