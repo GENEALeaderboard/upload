@@ -34,7 +34,6 @@ export async function handleUploadVideo(request, storage, env, corsHeaders) {
 		const rsupload = await storage.put(uniqueKey, arrayBuffer, {
 			httpMetadata: { contentType: file.type || "video/mp4" },
 		})
-		console.log("rsupload", rsupload)
 
 		if (rsupload) {
 			return responseSuccess(
