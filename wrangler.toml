@@ -26,7 +26,7 @@ R2_BUCKET_NAME="genea"
 R2_BUCKET_URL_ID="fbeaf7896b6e4c9c9bb55fd70512c2e8"
 
 [dev]
-port = 8091
+port = 8032
 
 [observability]
 enabled = true

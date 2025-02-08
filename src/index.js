@@ -1,16 +1,6 @@
 import { responseError, responseFailed } from "./response"
-import { isValidateToken } from "./validateToken"
-import { fetchStudies } from "./studies/fetchStudies"
-import { fetchInputCode } from "./inputcode/fetchInputCode"
-import { handleGithubCallback } from "./auth/handleGithubCallback"
-import { handleGetUser } from "./auth/handleGetUser"
-import { handleLogout } from "./auth/handleLogout"
-import { updateInputCode } from "./inputcode/updateInputCode"
-import { fetchSubmissions } from "./submissions/fetchSubmissions"
-import { fetchSystems } from "./systems/fetchSystems"
-import { insertSystems } from "./systems/insertSystems"
-import { fetchVideos } from "./videos2/fetchVideos"
-import { insertVideos } from "./videos2/insertVideos"
+import { handleUploadVideo } from "./videos/handleUploadVideo"
+import { handleUploadNPY } from "./submission/handleUploadNPY"
 
 export default {
 	async fetch(request, env, ctx) {
@@ -29,7 +19,7 @@ export default {
 		if (request.method === "GET") {
 			return new Response(JSON.stringify({ message: "It work" }), { headers: corsHeaders })
 		}
-		
+
 		const url = new URL(request.url)
 		const path = url.pathname
 		const menthod = request.method
@@ -61,13 +51,13 @@ export default {
 				// 		default:
 				// 			return responseFailed(null, "Invalid api", 404, corsHeaders)
 				// 	}
-				// } else
+				// }
 				if (menthod === "POST") {
 					switch (path) {
 						case "/api/videos":
-							return insertSystems(request, env, corsHeaders)
-						case "/api/videos":
-							return insertVideos(request, env, corsHeaders)
+							return handleUploadVideo(request, storage, corsHeaders)
+						case "/api/npy":
+							return handleUploadNPY(request, storage, corsHeaders)
 						default:
 							return responseFailed(null, "Invalid api", 404, corsHeaders)
 					}
