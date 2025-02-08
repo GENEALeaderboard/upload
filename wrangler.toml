@@ -18,12 +18,9 @@ workers_dev = true
 # - https://developers.cloudflare.com/workers/configuration/secrets/
 [vars]
 ALLOWED_ORIGIN = "https://genealeaderboard.github.io"
-NEXT_PUBLIC_API_ENDPOINT="http://geneaapi.hemvip.workers.dev"
+NEXT_PUBLIC_API_ENDPOINT = "http://geneaapi.hemvip.workers.dev"
 ENVIRONMENT = "production"
-R2_ACCESS_KEY_ID="9bbd9ed31a5deeefa7874f789279c703"
-R2_ENDPOINT="https://e62de0d5e5e9873cf19207d31ed0c65e.r2.cloudflarestorage.com"
-R2_BUCKET_NAME="genea"
-R2_BUCKET_URL_ID="fbeaf7896b6e4c9c9bb55fd70512c2e8"
+PUBLIC_R2_URL = "https://pub-fbeaf7896b6e4c9c9bb55fd70512c2e8.r2.dev"
 
 [dev]
 port = 8032

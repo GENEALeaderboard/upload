@@ -1,7 +1,10 @@
 import { responseError, responseFailed, responseSuccess } from "@/response"
 
-export async function handleUploadVideo(request, storage, corsHeaders) {
+export async function handleUploadVideo(request, storage, env, corsHeaders) {
 	try {
+		if (env.PUBLIC_R2_URL === undefined) {
+			return responseFailed(null, "No public url found", 404, corsHeaders)
+		}
 		const formData = await request.formData()
 		const systemname = formData.get("systemname")
 		const fileName = formData.get("fileName")
@@ -31,10 +34,11 @@ export async function handleUploadVideo(request, storage, corsHeaders) {
 		const rsupload = await storage.put(uniqueKey, arrayBuffer, {
 			httpMetadata: { contentType: file.type || "video/mp4" },
 		})
+		console.log("rsupload", rsupload)
 
 		if (rsupload) {
 			return responseSuccess(
-				{ path: uniqueKey, inputcode: inputcode, url: rsupload.Location },
+				{ path: uniqueKey, inputcode: inputcode, url: `${env.PUBLIC_R2_URL}/${uniqueKey}` },
 				`Upload ${fileName} video success`,
 				corsHeaders
 			)

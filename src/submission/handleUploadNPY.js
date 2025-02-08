@@ -1,6 +1,6 @@
 import { responseError, responseFailed, responseSuccess } from "@/response.js"
 
-export async function handleUploadNPY(request, storage, corsHeaders) {
+export async function handleUploadNPY(request, storage, env, corsHeaders) {
 	try {
 		const formData = await request.formData()
 		const username = formData.get("username")

@@ -34,9 +34,9 @@ export default {
 			if (menthod === "POST") {
 				switch (path) {
 					case "/upload/videos":
-						return handleUploadVideo(request, storage, corsHeaders)
+						return handleUploadVideo(request, storage, env, corsHeaders)
 					case "/upload/npy":
-						return handleUploadNPY(request, storage, corsHeaders)
+						return handleUploadNPY(request, storage, env, corsHeaders)
 					default:
 						return responseFailed(null, "Invalid api", 404, corsHeaders)
 				}
