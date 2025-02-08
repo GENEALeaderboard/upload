@@ -9,6 +9,7 @@ export default {
 			"Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
 			"Access-Control-Allow-Headers": "Content-Type",
 			"Access-Control-Allow-Credentials": "true",
+			"Access-Control-Max-Age": "86400",
 		}
 
 		if (request.method === "OPTIONS") {
@@ -30,6 +31,17 @@ export default {
 				return responseError(null, "No storage found", 404, corsHeaders)
 			}
 
+			if (menthod === "POST") {
+				switch (path) {
+					case "/upload/videos":
+						return handleUploadVideo(request, storage, corsHeaders)
+					case "/upload/npy":
+						return handleUploadNPY(request, storage, corsHeaders)
+					default:
+						return responseFailed(null, "Invalid api", 404, corsHeaders)
+				}
+			}
+
 			// if (url.pathname.startsWith("/auth/")) {
 			// 	switch (path) {
 			// 		case "/auth/callback":
@@ -40,7 +52,6 @@ export default {
 			// } else
 			if (url.pathname.startsWith("/api/")) {
 				// const isValid = await isValidateToken(request, env)
-
 				// if (!isValid) {
 				// 	return responseError(null, "Unauthorized", 401, corsHeaders)
 				// }
@@ -52,16 +63,6 @@ export default {
 				// 			return responseFailed(null, "Invalid api", 404, corsHeaders)
 				// 	}
 				// }
-				if (menthod === "POST") {
-					switch (path) {
-						case "/api/videos":
-							return handleUploadVideo(request, storage, corsHeaders)
-						case "/api/npy":
-							return handleUploadNPY(request, storage, corsHeaders)
-						default:
-							return responseFailed(null, "Invalid api", 404, corsHeaders)
-					}
-				}
 			}
 
 			return responseError(null, "Invalid api", 404, corsHeaders)
