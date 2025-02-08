@@ -14,6 +14,10 @@ export async function handleUploadVideo(request, storage, corsHeaders) {
 			return responseFailed(null, "File upload not found", 404, corsHeaders)
 		}
 
+		if (file.type !== "video/mp4") {
+			return responseFailed(null, "Only support mp4 video.", 400, corsHeaders)
+		}
+
 		const contentType = request.headers.get("content-type") || ""
 		if (!contentType.includes("multipart/form-data")) {
 			return new Response("Invalid content type. Expecting multipart form data.", { status: 400 })

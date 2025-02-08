@@ -4,8 +4,8 @@ export async function handleUploadNPY(request, storage, corsHeaders) {
 	try {
 		const formData = await request.formData()
 		const username = formData.get("username")
-		const fileName = formData.get("fileName")
 		const file = formData.get("file")
+		console.log("formData", formData)
 
 		if (!file || !(file instanceof Blob)) {
 			return responseFailed(null, "File upload not found", 404, corsHeaders)
@@ -13,16 +13,25 @@ export async function handleUploadNPY(request, storage, corsHeaders) {
 
 		const contentType = request.headers.get("content-type") || ""
 		if (!contentType.includes("multipart/form-data")) {
-			return new Response("Invalid content type. Expecting multipart form data.", { status: 400 })
+			return responseFailed(null, "Invalid content type. Expecting multipart form data.", 400, corsHeaders)
 		}
 
-		const uniqueKey = `motions/${username}/${fileName}`
-		const arrayBuffer = await file.arrayBuffer()
-		storage.put(uniqueKey, arrayBuffer, {
-			httpMetadata: { contentType: file.type || "video/mp4" },
-		})
+		console.log("contentType", contentType)
 
-		return responseSuccess({ path: uniqueKey }, `Upload ${fileName} video success`, corsHeaders)
+		const uniqueKey = `motions/${username}/${Date.now()}-${file.name}`
+		console.log("uniqueKey", uniqueKey)
+		const arrayBuffer = await file.arrayBuffer()
+		const uint8Array = new Uint8Array(arrayBuffer)
+		const res = await storage.put(uniqueKey, uint8Array, {
+			httpMetadata: { contentType: file.type },
+		})
+		console.log("res", res)
+		if (res.success) {
+			return responseSuccess({ path: uniqueKey, res }, `Upload ${file.name} npy success`, corsHeaders)
+		}
+
+		console.log("Error", res)
+		return responseFailed(res, `Upload ${file.name} npy failed.`, 400, corsHeaders)
 	} catch (err) {
 		const errorMessage = err.message || "An unknown error occurred"
 		console.log("Exception", err)
