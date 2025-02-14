@@ -109,7 +109,7 @@ preview_database_id = "36316b2a-afc7-4db4-a639-a68d4f8b212c"
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#r2-buckets
 [[r2_buckets]]
 binding = "GENEA_BUCKET"
-bucket_name = "genea_production"
+bucket_name = "genea"
 preview_bucket_name="genea"
 
 # [[r2_buckets]]
