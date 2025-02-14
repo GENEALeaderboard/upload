@@ -50,6 +50,12 @@ enabled = true
 binding = "DB_HEMVIP"
 database_name = "hemvip"
 database_id = "36316b2a-afc7-4db4-a639-a68d4f8b212c"
+preview_database_id = "36316b2a-afc7-4db4-a639-a68d4f8b212c"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "hemvip_production"
+# database_id = "7a0ead16-7bdc-480a-8a76-0a10ec035b73"
 
 # Bind a dispatch namespace. Use Workers for Platforms to deploy serverless functions programmatically on behalf of your customers.
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#dispatch-namespace-bindings-workers-for-platforms
@@ -103,7 +109,12 @@ database_id = "36316b2a-afc7-4db4-a639-a68d4f8b212c"
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#r2-buckets
 [[r2_buckets]]
 binding = "GENEA_BUCKET"
-bucket_name = "genea"
+bucket_name = "genea_production"
+preview_bucket_name="genea"
+
+# [[r2_buckets]]
+# bucket_name = "genea-production"
+# binding = "genea_production"
 
 # Bind another Worker service. Use this binding to call another Worker without network overhead.
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings

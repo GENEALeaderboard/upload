@@ -1,6 +1,7 @@
 import { responseError, responseFailed } from "./response"
 import { handleUploadVideo } from "./videos/handleUploadVideo"
 import { handleUploadNPY } from "./submission/handleUploadNPY"
+import { handleUploadAttentionCheck } from "./attention-check/handleUploadVideo"
 
 export default {
 	async fetch(request, env, ctx) {
@@ -35,6 +36,8 @@ export default {
 				switch (path) {
 					case "/upload/videos":
 						return handleUploadVideo(request, storage, env, corsHeaders)
+					case "/upload/attention-check":
+						return handleUploadAttentionCheck(request, storage, env, corsHeaders)
 					case "/upload/npy":
 						return handleUploadNPY(request, storage, env, corsHeaders)
 					default:
