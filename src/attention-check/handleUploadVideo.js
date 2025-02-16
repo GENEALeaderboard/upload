@@ -7,6 +7,7 @@ export async function handleUploadAttentionCheck(request, storage, env, corsHead
 		}
 		const formData = await request.formData()
 		const fileName = formData.get("fileName")
+		const inputCode = formData.get("inputCode")
 		// console.log("formData", formData)
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,14 +30,13 @@ export async function handleUploadAttentionCheck(request, storage, env, corsHead
 		// const rsupload = await storage.put(uniqueKey, file.stream())
 		const arrayBuffer = await file.arrayBuffer()
 
-		const inputcode = fileName.replace(/\.[^.]+$/, "")
 		const rsupload = await storage.put(uniqueKey, arrayBuffer, {
 			httpMetadata: { contentType: file.type || "video/mp4" },
 		})
 
 		if (rsupload) {
 			return responseSuccess(
-				{ path: uniqueKey, inputcode: inputcode, url: `${env.PUBLIC_R2_URL}/${uniqueKey}` },
+				{ path: uniqueKey, inputcode: inputCode, url: `${env.PUBLIC_R2_URL}/${uniqueKey}` },
 				`Upload ${fileName} video success`,
 				corsHeaders
 			)
