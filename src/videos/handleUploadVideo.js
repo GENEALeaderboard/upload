@@ -8,6 +8,7 @@ export async function handleUploadVideo(request, storage, env, corsHeaders) {
 		const formData = await request.formData()
 		const systemname = formData.get("systemname")
 		const fileName = formData.get("fileName")
+		const videoType = formData.get("videoType") || "origin"
 		// console.log("formData", formData)
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,7 +27,10 @@ export async function handleUploadVideo(request, storage, env, corsHeaders) {
 			return new Response("Invalid content type. Expecting multipart form data.", { status: 400 })
 		}
 
-		const uniqueKey = `videos/original/${systemname}/${Date.now()}-${fileName}`
+		// Keep the existing `videos/original/...` prefix for the default `origin` type so
+		// previously uploaded files don't need to be moved. New video types get their own prefix.
+		const keyPrefix = videoType === "origin" ? "videos/original" : `videos/${videoType}`
+		const uniqueKey = `${keyPrefix}/${systemname}/${Date.now()}-${fileName}`
 		// const rsupload = await storage.put(uniqueKey, file.stream())
 		const arrayBuffer = await file.arrayBuffer()
 
