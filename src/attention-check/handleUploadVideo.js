@@ -8,6 +8,7 @@ export async function handleUploadAttentionCheck(request, storage, env, corsHead
 		const formData = await request.formData()
 		const fileName = formData.get("fileName")
 		const inputCode = formData.get("inputCode")
+		const category = formData.get("category") || "origin"
 		// console.log("formData", formData)
 
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,7 +27,11 @@ export async function handleUploadAttentionCheck(request, storage, env, corsHead
 			return new Response("Invalid content type. Expecting multipart form data.", { status: 400 })
 		}
 
-		const uniqueKey = `videos/attentioncheck/${Date.now()}-${fileName}`
+		// Keep the existing `videos/attentioncheck/...` prefix for the default `origin`
+		// category so previously uploaded files don't need to be moved. New categories
+		// get their own sub-prefix.
+		const keyPrefix = category === "origin" ? "videos/attentioncheck" : `videos/attentioncheck/${category}`
+		const uniqueKey = `${keyPrefix}/${Date.now()}-${fileName}`
 		// const rsupload = await storage.put(uniqueKey, file.stream())
 		const arrayBuffer = await file.arrayBuffer()
 
