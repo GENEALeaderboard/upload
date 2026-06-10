@@ -3,6 +3,7 @@ import { handleUploadVideo } from "./videos/handleUploadVideo"
 import { handleUploadNPY } from "./submission/handleUploadNPY"
 import { handleUploadAttentionCheck } from "./attention-check/handleUploadVideo"
 import { handleUploadMismatch } from "./mismatch/handleUploadMismatch"
+import { listStorage } from "./videos/listStorage"
 
 export default {
 	async fetch(request, env, ctx) {
@@ -19,10 +20,6 @@ export default {
 			return new Response(null, { headers: corsHeaders })
 		}
 
-		if (request.method === "GET") {
-			return new Response(JSON.stringify({ message: "It work" }), { headers: corsHeaders })
-		}
-
 		const url = new URL(request.url)
 		const path = url.pathname
 		const menthod = request.method
@@ -31,6 +28,15 @@ export default {
 			const storage = env.GENEA_BUCKET
 			if (!storage) {
 				return responseError(null, "No storage found", 404, corsHeaders)
+			}
+
+			if (menthod === "GET") {
+				switch (path) {
+					case "/api/storage":
+						return listStorage(request, storage, corsHeaders)
+					default:
+						return new Response(JSON.stringify({ message: "It work" }), { headers: corsHeaders })
+				}
 			}
 
 			if (menthod === "POST") {
