@@ -22,9 +22,13 @@ export async function handleUploadVideo(request, storage, env, corsHeaders) {
 		}
 		console.log("[uploadVideo] file received", { size: file.size, type: file.type, name: file.name })
 
-		if (file.type !== "video/mp4") {
-			console.log("[uploadVideo] rejected non-mp4 file", { type: file.type })
-			return responseFailed(null, "Only support mp4 video.", 400, corsHeaders)
+		// Accept .mp4 videos and .txt text descriptions (e.g. the semantic-mismatch
+		// study stores one .txt description alongside each video in the same folder).
+		const isMp4 = file.type === "video/mp4"
+		const isTxt = file.type === "text/plain" || /\.txt$/i.test(fileName || "")
+		if (!isMp4 && !isTxt) {
+			console.log("[uploadVideo] rejected unsupported file", { type: file.type, fileName })
+			return responseFailed(null, "Only .mp4 video or .txt files are supported.", 400, corsHeaders)
 		}
 
 		const contentType = request.headers.get("content-type") || ""
@@ -33,18 +37,21 @@ export async function handleUploadVideo(request, storage, env, corsHeaders) {
 			return new Response("Invalid content type. Expecting multipart form data.", { status: 400 })
 		}
 
+		const inputcode = fileName.replace(/\.[^.]+$/, "")
+
 		const keyPrefix = videoType === "origin" ? "videos/original" : `videos/${videoType}`
-		const uniqueKey = `${keyPrefix}/${systemname}/${Date.now()}-${fileName}`
+		// .txt descriptions use a deterministic key (no timestamp) so study generation
+		// can derive the URL from a video's (system, inputcode); re-upload overwrites.
+		// Videos keep a timestamped key to avoid collisions across re-uploads.
+		const uniqueKey = isTxt ? `${keyPrefix}/${systemname}/${inputcode}.txt` : `${keyPrefix}/${systemname}/${Date.now()}-${fileName}`
 		console.log("[uploadVideo] computed key", { uniqueKey })
 
 		const bufStart = Date.now()
 		const arrayBuffer = await file.arrayBuffer()
 		console.log("[uploadVideo] arrayBuffer ready", { bytes: arrayBuffer.byteLength, ms: Date.now() - bufStart })
-
-		const inputcode = fileName.replace(/\.[^.]+$/, "")
 		const putStart = Date.now()
 		const rsupload = await storage.put(uniqueKey, arrayBuffer, {
-			httpMetadata: { contentType: file.type || "video/mp4" },
+			httpMetadata: { contentType: file.type || (isTxt ? "text/plain" : "video/mp4") },
 		})
 		console.log("[uploadVideo] r2.put done", { ok: !!rsupload, ms: Date.now() - putStart })
 

@@ -4,6 +4,7 @@ import { handleUploadNPY } from "./submission/handleUploadNPY"
 import { handleUploadAttentionCheck } from "./attention-check/handleUploadVideo"
 import { handleUploadMismatch } from "./mismatch/handleUploadMismatch"
 import { listStorage } from "./videos/listStorage"
+import { getText } from "./videos/getText"
 
 export default {
 	async fetch(request, env, ctx) {
@@ -34,6 +35,8 @@ export default {
 				switch (path) {
 					case "/api/storage":
 						return listStorage(request, storage, corsHeaders)
+					case "/api/text":
+						return getText(request, storage, corsHeaders)
 					default:
 						return new Response(JSON.stringify({ message: "It work" }), { headers: corsHeaders })
 				}
