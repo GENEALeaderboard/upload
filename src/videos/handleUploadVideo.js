@@ -40,10 +40,10 @@ export async function handleUploadVideo(request, storage, env, corsHeaders) {
 		const inputcode = fileName.replace(/\.[^.]+$/, "")
 
 		const keyPrefix = videoType === "origin" ? "videos/original" : `videos/${videoType}`
-		// .txt descriptions use a deterministic key (no timestamp) so study generation
-		// can derive the URL from a video's (system, inputcode); re-upload overwrites.
-		// Videos keep a timestamped key to avoid collisions across re-uploads.
-		const uniqueKey = isTxt ? `${keyPrefix}/${systemname}/${inputcode}.txt` : `${keyPrefix}/${systemname}/${Date.now()}-${fileName}`
+		// Both .txt descriptions and .mp4 videos use a deterministic key (no timestamp)
+		// keyed on (system, inputcode). Re-uploading overwrites the same R2 object, so
+		// study pages that already reference this URL keep resolving after a re-upload.
+		const uniqueKey = isTxt ? `${keyPrefix}/${systemname}/${inputcode}.txt` : `${keyPrefix}/${systemname}/${fileName}`
 		console.log("[uploadVideo] computed key", { uniqueKey })
 
 		const bufStart = Date.now()
